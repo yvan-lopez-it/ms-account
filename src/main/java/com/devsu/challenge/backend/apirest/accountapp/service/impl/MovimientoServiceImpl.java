@@ -11,6 +11,7 @@ import com.devsu.challenge.backend.apirest.accountapp.service.IMovimientoService
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -37,6 +38,7 @@ public class MovimientoServiceImpl implements IMovimientoService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Movimiento createMovimiento(MovimientoRequestDto movimientoRequestDto) {
 
         // Verificar si la cuenta existe y está activa
@@ -86,10 +88,17 @@ public class MovimientoServiceImpl implements IMovimientoService {
 
         return movimientoRepository.findById(id)
             .map(movimiento -> {
+                double nuevoSaldo = cuentaOpt.get().getSaldoInicial() - movimiento.getValor() + detalleMovimiento.getValor();
+
+                if (nuevoSaldo < 0) {
+                    throw new SaldoNoDisponibleException("Saldo no disponible");
+                }
+
                 movimiento.setFecha(detalleMovimiento.getFecha());
                 movimiento.setTipoMovimiento(detalleMovimiento.getTipoMovimiento());
                 movimiento.setValor(detalleMovimiento.getValor());
                 movimiento.setSaldo(detalleMovimiento.getSaldo());
+
                 return movimientoRepository.save(movimiento);
             }).orElse(null);
     }
