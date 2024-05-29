@@ -1,15 +1,13 @@
 package com.devsu.challenge.backend.apirest.accountapp.exceptions;
 
 import java.io.Serial;
-import org.springframework.web.client.HttpStatusCodeException;
 
-public class ClienteNoEncontradoException extends RuntimeException {
+public class CuentaNoExisteException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = -1;
 
-    public ClienteNoEncontradoException(String message) {
+    public CuentaNoExisteException(String message) {
         super(message);
     }
-
 }

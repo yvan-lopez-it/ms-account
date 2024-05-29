@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -32,11 +33,13 @@ public class CuentaServiceImpl implements ICuentaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Cuenta> getAllCuentas() {
         return cuentaRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Cuenta> getCuentaById(Long id) {
         return cuentaRepository.findById(id);
     }
@@ -56,9 +59,13 @@ public class CuentaServiceImpl implements ICuentaService {
             ClienteResponse.class
         );
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            // El cliente existe, guardar la cuenta
-            return cuentaRepository.save(cuenta);
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            // El cliente existe. Verificar que el cliente está activo.
+            if (Boolean.TRUE.equals(response.getBody().getEstado())) {
+                return cuentaRepository.save(cuenta);
+            } else {
+                throw new ClienteNoEncontradoException("Cliente no esta activo");
+            }
         } else {
             // El cliente no existe, lanzar una excepción o manejar el caso de error según corresponda
             throw new ClienteNoEncontradoException("Cliente con clientId={" + cuenta.getClientId() + "} no encontrado");
