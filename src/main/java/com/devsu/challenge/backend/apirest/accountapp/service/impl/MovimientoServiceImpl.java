@@ -3,6 +3,7 @@ package com.devsu.challenge.backend.apirest.accountapp.service.impl;
 import com.devsu.challenge.backend.apirest.accountapp.dto.MovimientoRequestDto;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Cuenta;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Movimiento;
+import com.devsu.challenge.backend.apirest.accountapp.enums.TipoMovimiento;
 import com.devsu.challenge.backend.apirest.accountapp.exceptions.CuentaNoExisteException;
 import com.devsu.challenge.backend.apirest.accountapp.exceptions.SaldoNoDisponibleException;
 import com.devsu.challenge.backend.apirest.accountapp.repository.CuentaRepository;
@@ -68,7 +69,7 @@ public class MovimientoServiceImpl implements IMovimientoService {
 
     private Movimiento crearMovimientoEntity(double saldoIniMov, Cuenta cuenta, MovimientoRequestDto movimientoRequestDto) {
         Movimiento movimiento = new Movimiento();
-        movimiento.setTipoMovimiento(movimientoRequestDto.getTipoMovimiento());
+        movimiento.setTipoMovimiento(TipoMovimiento.valueOf(movimientoRequestDto.getTipoMovimiento()));
         movimiento.setValor(movimientoRequestDto.getValor());
         movimiento.setSaldo(saldoIniMov);
         movimiento.setCuenta(cuenta);

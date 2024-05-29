@@ -3,6 +3,7 @@ package com.devsu.challenge.backend.apirest.accountapp.service.impl;
 import com.devsu.challenge.backend.apirest.accountapp.dto.ReporteResponse;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Cuenta;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Movimiento;
+import com.devsu.challenge.backend.apirest.accountapp.enums.TipoMovimiento;
 import com.devsu.challenge.backend.apirest.accountapp.repository.CuentaRepository;
 import com.devsu.challenge.backend.apirest.accountapp.repository.MovimientoRepository;
 import com.devsu.challenge.backend.apirest.accountapp.service.IReporteService;
@@ -45,7 +46,7 @@ public class ReporteServiceImpl implements IReporteService {
                     movimientos.stream()
                         .map(mov -> new ReporteResponse.MovimientoReporte(
                             mov.getFecha(),
-                            mov.getTipoMovimiento(),
+                            mov.getTipoMovimiento().toString(),
                             mov.getValor(),
                             mov.getSaldo()
                         )).collect(Collectors.toList())
@@ -57,7 +58,7 @@ public class ReporteServiceImpl implements IReporteService {
 
     private double calcularSaldoFinal(double saldoInicial, List<Movimiento> movimientos) {
         return movimientos.stream()
-            .mapToDouble(mov -> mov.getTipoMovimiento().equalsIgnoreCase("DEPOSITO")
+            .mapToDouble(mov -> TipoMovimiento.valueOf("DEPOSITO") == mov.getTipoMovimiento()
                 ? mov.getValor()
                 : -mov.getValor())
             .sum() + saldoInicial;
