@@ -1,7 +1,7 @@
 package com.devsu.challenge.backend.apirest.accountapp.exceptions;
 
 import java.io.Serial;
-import org.springframework.web.client.HttpStatusCodeException;
+
 
 public class ClienteNoEncontradoException extends RuntimeException {
 
