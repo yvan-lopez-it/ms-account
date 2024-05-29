@@ -1,7 +1,6 @@
 package com.devsu.challenge.backend.apirest.accountapp.service.impl;
 
 import com.devsu.challenge.backend.apirest.accountapp.dto.ReporteMovimientoDTO;
-import com.devsu.challenge.backend.apirest.accountapp.repository.CuentaRepository;
 import com.devsu.challenge.backend.apirest.accountapp.repository.MovimientoRepository;
 import com.devsu.challenge.backend.apirest.accountapp.service.IReporteService;
 import java.time.LocalDateTime;
