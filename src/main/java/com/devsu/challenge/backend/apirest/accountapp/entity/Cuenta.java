@@ -54,9 +54,8 @@ public class Cuenta implements Serializable {
     @Column(nullable = false)
     private Double saldoInicial;
 
-    @NotBlank(message = "El estado no puede estar vacio")
     @Column(nullable = false)
-    private boolean estado;
+    private boolean estado = true;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

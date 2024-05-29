@@ -10,7 +10,7 @@ public interface ICuentaService {
 
     Optional<Cuenta> getCuentaById(Long id);
 
-    Cuenta createCuenta(Cuenta cuenta);
+    Cuenta crearCuenta(Cuenta cuenta);
 
     Cuenta updateCuenta(Long id, Cuenta detalleCuenta);
 
