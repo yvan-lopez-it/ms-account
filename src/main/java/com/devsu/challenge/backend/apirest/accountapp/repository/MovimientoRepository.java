@@ -9,8 +9,8 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     List<Movimiento> findByCuentaIdAndFechaBetween(Long cuentaId, LocalDate startDate, LocalDate endDate);
 
-    List<Movimiento> findByCuenta(String numeroCuenta);
+    //List<Movimiento> findByCuenta(String numeroCuenta);
 
-    List<Movimiento> findByFechaAndCliente(String fechaInicio, String fechaFin, String cliente);
+    //List<Movimiento> findByFechaAnd(String fechaInicio, String fechaFin, String cliente);
 
 }

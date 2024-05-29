@@ -1,8 +1,10 @@
 package com.devsu.challenge.backend.apirest.accountapp.service.impl;
 
+import com.devsu.challenge.backend.apirest.accountapp.dto.MovimientoRequestDto;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Cuenta;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Movimiento;
 import com.devsu.challenge.backend.apirest.accountapp.exceptions.CuentaNoExisteException;
+import com.devsu.challenge.backend.apirest.accountapp.exceptions.SaldoNoDisponibleException;
 import com.devsu.challenge.backend.apirest.accountapp.repository.CuentaRepository;
 import com.devsu.challenge.backend.apirest.accountapp.repository.MovimientoRepository;
 import com.devsu.challenge.backend.apirest.accountapp.service.IMovimientoService;
@@ -35,16 +37,41 @@ public class MovimientoServiceImpl implements IMovimientoService {
     }
 
     @Override
-    public Movimiento createMovimiento(Movimiento movimiento) {
+    public Movimiento createMovimiento(MovimientoRequestDto movimientoRequestDto) {
 
         // Verificar si la cuenta existe y está activa
-        Optional<Cuenta> cuentaOpt = cuentaRepository.findByNumeroCuenta(movimiento.getCuenta().getNumeroCuenta());
+        Optional<Cuenta> cuentaOpt = cuentaRepository.findByNumeroCuenta(movimientoRequestDto.getCuentaId());
 
         if (cuentaOpt.isPresent() && cuentaOpt.get().isEstado()) {
+            Cuenta cuenta = cuentaOpt.get();
+            double saldoIniMov = cuenta.getSaldoInicial();
+
+            double nuevoSaldo = cuenta.getSaldoInicial() + movimientoRequestDto.getValor();
+
+            // Si el nuevo saldo es menor a 0, lanza el aviso de saldo no disponible.
+            if (nuevoSaldo < 0) {
+                throw new SaldoNoDisponibleException("Saldo no disponible");
+            }
+
+            cuenta.setSaldoInicial(nuevoSaldo);
+            cuentaRepository.save(cuenta);
+
+            Movimiento movimiento = this.crearMovimientoEntity(saldoIniMov, cuenta, movimientoRequestDto);
+
             return movimientoRepository.save(movimiento);
         } else {
             throw new CuentaNoExisteException("La cuenta no existe o no está activa");
         }
+    }
+
+    private Movimiento crearMovimientoEntity(double saldoIniMov, Cuenta cuenta, MovimientoRequestDto movimientoRequestDto) {
+        Movimiento movimiento = new Movimiento();
+        movimiento.setTipoMovimiento(movimientoRequestDto.getTipoMovimiento());
+        movimiento.setValor(movimientoRequestDto.getValor());
+        movimiento.setSaldo(saldoIniMov);
+        movimiento.setCuenta(cuenta);
+
+        return movimiento;
     }
 
     @Override

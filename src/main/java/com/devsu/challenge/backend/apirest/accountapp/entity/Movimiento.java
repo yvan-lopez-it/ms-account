@@ -40,11 +40,9 @@ public class Movimiento implements Serializable {
     @Column(nullable = false)
     private String tipoMovimiento;
 
-    @NotBlank(message = "El valor no puede estar vacio")
     @Column(nullable = false)
     private Double valor;
 
-    @NotBlank(message = "El saldo no puede estar vacio")
     @Column(nullable = false)
     private Double saldo;
 
