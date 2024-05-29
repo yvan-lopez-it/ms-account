@@ -1,6 +1,6 @@
 package com.devsu.challenge.backend.apirest.accountapp.service.impl;
 
-import com.devsu.challenge.backend.apirest.accountapp.dto.MovimientoRequestDto;
+import com.devsu.challenge.backend.apirest.accountapp.dto.MovimientoRequestDTO;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Cuenta;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Movimiento;
 import com.devsu.challenge.backend.apirest.accountapp.enums.TipoMovimiento;
@@ -40,7 +40,7 @@ public class MovimientoServiceImpl implements IMovimientoService {
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public Movimiento createMovimiento(MovimientoRequestDto movimientoRequestDto) {
+    public Movimiento createMovimiento(MovimientoRequestDTO movimientoRequestDto) {
 
         // Verificar si la cuenta existe y está activa
         Optional<Cuenta> cuentaOpt = cuentaRepository.findByNumeroCuenta(movimientoRequestDto.getCuentaId());
@@ -67,7 +67,7 @@ public class MovimientoServiceImpl implements IMovimientoService {
         }
     }
 
-    private Movimiento crearMovimientoEntity(double saldoIniMov, Cuenta cuenta, MovimientoRequestDto movimientoRequestDto) {
+    private Movimiento crearMovimientoEntity(double saldoIniMov, Cuenta cuenta, MovimientoRequestDTO movimientoRequestDto) {
         Movimiento movimiento = new Movimiento();
         movimiento.setTipoMovimiento(TipoMovimiento.valueOf(movimientoRequestDto.getTipoMovimiento()));
         movimiento.setValor(movimientoRequestDto.getValor());

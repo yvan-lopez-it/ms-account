@@ -1,6 +1,6 @@
 package com.devsu.challenge.backend.apirest.accountapp.controller;
 
-import com.devsu.challenge.backend.apirest.accountapp.dto.MovimientoRequestDto;
+import com.devsu.challenge.backend.apirest.accountapp.dto.MovimientoRequestDTO;
 import com.devsu.challenge.backend.apirest.accountapp.entity.Movimiento;
 import com.devsu.challenge.backend.apirest.accountapp.exceptions.CuentaNoExisteException;
 import com.devsu.challenge.backend.apirest.accountapp.service.IMovimientoService;
@@ -37,7 +37,7 @@ public class MovimientoController {
     }
 
     @PostMapping
-    public ResponseEntity<Movimiento> crearMovimiento(@RequestBody MovimientoRequestDto movimientoRequestDto) {
+    public ResponseEntity<Movimiento> crearMovimiento(@RequestBody MovimientoRequestDTO movimientoRequestDto) {
         try {
             Movimiento nuevoMov = movimientoService.createMovimiento(movimientoRequestDto);
             return new ResponseEntity<>(nuevoMov, HttpStatus.CREATED);

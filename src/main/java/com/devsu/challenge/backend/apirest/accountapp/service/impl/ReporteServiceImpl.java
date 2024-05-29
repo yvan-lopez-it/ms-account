@@ -1,13 +1,10 @@
 package com.devsu.challenge.backend.apirest.accountapp.service.impl;
 
-import com.devsu.challenge.backend.apirest.accountapp.dto.ReporteResponse;
-import com.devsu.challenge.backend.apirest.accountapp.entity.Cuenta;
-import com.devsu.challenge.backend.apirest.accountapp.entity.Movimiento;
-import com.devsu.challenge.backend.apirest.accountapp.enums.TipoMovimiento;
+import com.devsu.challenge.backend.apirest.accountapp.dto.ReporteMovimientoDTO;
 import com.devsu.challenge.backend.apirest.accountapp.repository.CuentaRepository;
 import com.devsu.challenge.backend.apirest.accountapp.repository.MovimientoRepository;
 import com.devsu.challenge.backend.apirest.accountapp.service.IReporteService;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -15,52 +12,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReporteServiceImpl implements IReporteService {
 
-    private final CuentaRepository cuentaRepository;
-
     private final MovimientoRepository movimientoRepository;
 
-    public ReporteServiceImpl(CuentaRepository cuentaRepository, MovimientoRepository movimientoRepository) {
-        this.cuentaRepository = cuentaRepository;
+    public ReporteServiceImpl(MovimientoRepository movimientoRepository) {
         this.movimientoRepository = movimientoRepository;
     }
 
     @Override
-    public ReporteResponse generateReporte(String fechaInicio, String fechaFin, String clienteId) {
-        LocalDate startDate = LocalDate.parse(fechaInicio);
-        LocalDate endDate = LocalDate.parse(fechaFin);
+    public List<ReporteMovimientoDTO> getMovimientosPorFechaYCliente(LocalDateTime fechaInicio, LocalDateTime fechaFin, String clientId) {
 
-        List<Cuenta> cuentas = cuentaRepository.findByClientId(clienteId);
+        List<Object[]> results = movimientoRepository.findMovimientosPorFechaYCliente(fechaInicio, fechaFin, clientId);
 
-        List<ReporteResponse.CuentaReporte> cuentasReporte = cuentas.stream()
-            .map(cuenta -> {
-                List<Movimiento> movimientos = movimientoRepository.findByCuentaIdAndFechaBetween(cuenta.getId(), startDate, endDate);
-
-                double saldoInicial = cuenta.getSaldoInicial();
-                double saldoFinal = calcularSaldoFinal(saldoInicial, movimientos);
-
-                return new ReporteResponse.CuentaReporte(
-                    cuenta.getId(),
-                    cuenta.getTipoCuenta().toString(),
-                    saldoInicial,
-                    saldoFinal,
-                    movimientos.stream()
-                        .map(mov -> new ReporteResponse.MovimientoReporte(
-                            mov.getFecha(),
-                            mov.getTipoMovimiento().toString(),
-                            mov.getValor(),
-                            mov.getSaldo()
-                        )).collect(Collectors.toList())
-                );
-            }).collect(Collectors.toList());
-
-        return new ReporteResponse(clienteId, cuentasReporte);
+        return results.stream().map(result -> {
+            ReporteMovimientoDTO reporteDTO = new ReporteMovimientoDTO();
+            reporteDTO.setFecha(result[0].toString());
+            reporteDTO.setCliente(result[1].toString());
+            reporteDTO.setNumeroCuenta(result[2].toString());
+            reporteDTO.setTipo(result[3].toString());
+            reporteDTO.setSaldoInicial(Double.parseDouble(result[4].toString()));
+            reporteDTO.setEstado(Boolean.parseBoolean(result[5].toString()));
+            reporteDTO.setMovimiento(Double.parseDouble(result[6].toString()));
+            reporteDTO.setSaldoDisponible(Double.parseDouble(result[7].toString()));
+            return reporteDTO;
+        }).collect(Collectors.toList());
     }
 
-    private double calcularSaldoFinal(double saldoInicial, List<Movimiento> movimientos) {
-        return movimientos.stream()
-            .mapToDouble(mov -> TipoMovimiento.valueOf("DEPOSITO") == mov.getTipoMovimiento()
-                ? mov.getValor()
-                : -mov.getValor())
-            .sum() + saldoInicial;
-    }
 }

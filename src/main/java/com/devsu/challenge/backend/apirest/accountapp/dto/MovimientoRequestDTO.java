@@ -4,7 +4,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class MovimientoRequestDto implements Serializable {
+public class MovimientoRequestDTO implements Serializable {
 
     private String tipoMovimiento;
     private Double valor;

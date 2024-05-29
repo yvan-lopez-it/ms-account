@@ -1,8 +1,10 @@
 package com.devsu.challenge.backend.apirest.accountapp.service;
 
-import com.devsu.challenge.backend.apirest.accountapp.dto.ReporteResponse;
+import com.devsu.challenge.backend.apirest.accountapp.dto.ReporteMovimientoDTO;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public interface IReporteService {
 
-    ReporteResponse generateReporte(String fechaInicio, String fechaFin, String clienteId);
+    List<ReporteMovimientoDTO> getMovimientosPorFechaYCliente(LocalDateTime fechaInicioLDT, LocalDateTime fechaFinLDT, String clientId);
 }
